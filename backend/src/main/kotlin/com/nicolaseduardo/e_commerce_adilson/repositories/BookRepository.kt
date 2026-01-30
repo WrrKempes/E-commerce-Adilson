@@ -1,0 +1,59 @@
+package com.nicolaseduardo.e_commerce_adilson.repositories
+
+import com.nicolaseduardo.e_commerce_adilson.models.book.Book
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Repository
+
+@Repository
+interface BookRepository : JpaRepository<Book, String> {
+
+    @Query(
+        """
+        SELECT b FROM Book b
+        JOIN FETCH b.authorRef a
+        """
+    )
+    fun findAllWithAuthor(): List<Book>
+
+    @Query(
+        """
+        SELECT b FROM Book b
+        JOIN FETCH b.authorRef a
+        WHERE a.id = :authorId
+        """
+    )
+    fun findAllByAuthorIdWithAuthor(@Param("authorId") authorId: Long): List<Book>
+
+    @Query(
+        """
+        SELECT b FROM Book b
+        JOIN FETCH b.authorRef a
+        WHERE lower(a.email) = :emailLower
+        """
+    )
+    fun findAllByAuthorEmailLower(@Param("emailLower") emailLower: String): List<Book>
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(
+        """
+        UPDATE Book b
+           SET b.stock = b.stock - :qty
+         WHERE b.id = :id
+           AND COALESCE(b.stock, 0) >= :qty
+        """
+    )
+    fun tryReserve(@Param("id") id: String, @Param("qty") qty: Int): Int
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(
+        """
+        UPDATE Book b
+           SET b.stock = b.stock + :qty
+         WHERE b.id = :id
+        """
+    )
+    fun release(@Param("id") id: String, @Param("qty") qty: Int): Int
+}
