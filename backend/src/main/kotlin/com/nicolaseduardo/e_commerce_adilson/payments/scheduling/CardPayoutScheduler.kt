@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.payments.scheduling
+
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate

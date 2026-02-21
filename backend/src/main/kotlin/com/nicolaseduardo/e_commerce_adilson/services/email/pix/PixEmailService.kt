@@ -1,3 +1,6 @@
+package com.nicolaseduardo.e_commerce_adilson.services.email.pix
+
+import com.nicolaseduardo.e_commerce_adilson.models.order.Order
 import org.springframework.stereotype.Service
 
 /**

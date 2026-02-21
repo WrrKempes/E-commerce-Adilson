@@ -1,3 +1,6 @@
+import com.nicolaseduardo.e_commerce_adilson.models.order.OrderEmail
+import com.nicolaseduardo.e_commerce_adilson.models.order.OrderEmailStatus
+import com.nicolaseduardo.e_commerce_adilson.models.order.OrderEmailType
 import org.slf4j.LoggerFactory
 import java.time.OffsetDateTime
 

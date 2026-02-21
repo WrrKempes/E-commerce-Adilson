@@ -1,3 +1,4 @@
+import com.nicolaseduardo.e_commerce_adilson.models.payout.PayoutEmail
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

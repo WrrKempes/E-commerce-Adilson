@@ -1,20 +1,11 @@
 // =======================================================
 // build.gradle.kts — Ecommerce Adilson Machado Books (Spring Boot + Kotlin + Flyway)
 // Compatível com PostgreSQL 18 e Flyway 11.17.0
-// Baseline/Legacy/Live escolhidos por FLYWAY_MODE (baseline|legacy|live)
 // =======================================================
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
-
-// >>> Estes artefatos entram no CLASSPATH DO PLUGIN do Flyway (não da app)
-buildscript {
-    repositories { mavenCentral() }
-    dependencies {
-        classpath("org.postgresql:postgresql:42.7.7")
-        classpath("org.flywaydb:flyway-database-postgresql:11.17.0")
-    }
-}
 
 plugins {
     kotlin("jvm") version "2.0.21"
@@ -24,7 +15,7 @@ plugins {
 
     id("org.springframework.boot") version "3.4.10"
     id("io.spring.dependency-management") version "1.1.6"
-    id("org.flywaydb.flyway") version "11.17.0" // PG18-ready
+    id("org.flywaydb.flyway") version "11.17.0"
 }
 
 group = "com.nicolaskempes"
@@ -76,7 +67,7 @@ dependencies {
     // JDBC driver (runtime da APP)
     runtimeOnly("org.postgresql:postgresql:42.7.7")
 
-    // Flyway na APP (runtime) — independente do classpath do plugin
+    // Flyway na APP (runtime)
     implementation("org.flywaydb:flyway-core:11.17.0")
     implementation("org.flywaydb:flyway-database-postgresql:11.17.0")
 
@@ -92,13 +83,17 @@ dependencies {
     }
 }
 
-kotlin {
+/* ---------- Kotlin / Toolchain / Compiler (compatível com IntelliJ) ---------- */
+kotlin { jvmToolchain(21) }
+
+tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
-        freeCompilerArgs.set(listOf("-Xjsr305=strict"))
+        jvmTarget.set(JvmTarget.JVM_21)
+        freeCompilerArgs.add("-Xjsr305=strict")
     }
-    jvmToolchain(21)
 }
+
+tasks.test { useJUnitPlatform() }
 
 /** JPA via allOpen + noArg */
 allOpen {
@@ -112,131 +107,137 @@ noArg {
     annotation("jakarta.persistence.Embeddable")
 }
 
-tasks.test { useJUnitPlatform() }
-
 /** Recursos: não empacotar templates operacionais */
 sourceSets {
     named("main") {
         resources {
             exclude("db/migration/T__*.sql")
-            exclude("db/migration/**/T__*.sql")
+            exclude("db/migration/*/T__.sql")
         }
     }
 }
-/* ====================== Flyway via ENV (simplificado) ======================
-   - Uma única pasta de migrações: src/main/resources/db/migration
-   - FLYWAY_LOCATIONS (se setado) sobrescreve a localização padrão
-   - Aceita URL vinda do Heroku (postgres://...) e normaliza para jdbc:postgresql://...
-   - Se USER/PASSWORD não vierem por envs, tenta extrair da URL
-   Variáveis aceitas (aliases):
-     URL:   FLYWAY_URL | JDBC_DATABASE_URL | DATABASE_URL | SPRING_DATASOURCE_URL
-     USER:  FLYWAY_USER | JDBC_DATABASE_USERNAME | DB_USERNAME | SPRING_DATASOURCE_USERNAME
-     PASS:  FLYWAY_PASSWORD | JDBC_DATABASE_PASSWORD | DB_PASSWORD | SPRING_DATASOURCE_PASSWORD
-     SCHEMAS: FLYWAY_SCHEMAS (padrão: "public")
-   Extras:
-     FLYWAY_LOCATIONS = "filesystem:...,classpath:..."
-     FLYWAY_CLEAN_DISABLED=true|false (padrão true)
-     -Dflyway.outOfOrder=true  (passado na linha de comando)
-   Placeholders:
-     SITE_AUTHOR_NAME, SITE_AUTHOR_EMAIL, SITE_AUTHOR_PIX_KEY
-   ========================================================================== */
 
-val isFlywayTaskRequested = gradle.startParameter.taskNames.any {
-    it.startsWith("flyway", ignoreCase = true) && it != "bootRun"
+/* ====================== Flyway via ENV (OCP-friendly) ====================== */
+
+private object FlywayEnv {
+    val url = listOf("FLYWAY_URL", "JDBC_DATABASE_URL", "DATABASE_URL", "SPRING_DATASOURCE_URL")
+    val user = listOf("FLYWAY_USER", "JDBC_DATABASE_USERNAME", "DB_USERNAME", "SPRING_DATASOURCE_USERNAME")
+    val pass = listOf("FLYWAY_PASSWORD", "JDBC_DATABASE_PASSWORD", "DB_PASSWORD", "SPRING_DATASOURCE_PASSWORD")
+
+    const val schemas = "FLYWAY_SCHEMAS"
+    const val locations = "FLYWAY_LOCATIONS"
+    const val cleanDisabled = "FLYWAY_CLEAN_DISABLED"
+
+    const val phName = "SITE_AUTHOR_NAME"
+    const val phEmail = "SITE_AUTHOR_EMAIL"
+    const val phPixKey = "SITE_AUTHOR_PIX_KEY"
 }
 
-fun envOr(default: String, vararg keys: String): String =
-    keys.firstNotNullOfOrNull(System::getenv) ?: default
+private fun firstEnv(keys: List<String>): String? =
+    keys.firstNotNullOfOrNull { k -> System.getenv(k)?.takeIf { it.isNotBlank() } }
 
-fun firstEnv(vararg keys: String): String? =
-    keys.firstNotNullOfOrNull(System::getenv)
+private fun envOr(default: String, key: String): String =
+    System.getenv(key)?.takeIf { it.isNotBlank() } ?: default
+
+private fun parseBooleanEnv(key: String, default: Boolean): Boolean {
+    val v = System.getenv(key)?.trim()?.lowercase() ?: return default
+    return when (v) {
+        "true", "1", "yes", "y", "on" -> true
+        "false", "0", "no", "n", "off" -> false
+        else -> default
+    }
+}
 
 /** Converte "postgres://user:pass@host:5432/db?..." → "jdbc:postgresql://host:5432/db?..."  */
-fun normalizeToJdbc(raw: String): String {
+private fun normalizeToJdbc(raw: String): String {
     if (raw.isBlank()) return raw
-    return if (raw.startsWith("postgres://")) {
-        // remove "postgres://user:pass@" → sobra "host:5432/db?..."
-        val hostPart = raw.removePrefix("postgres://").substringAfter("@", raw.removePrefix("postgres://"))
-        val base = "jdbc:postgresql://$hostPart"
-        // garante ssl no Heroku, se não veio
-        if ('?' in base) {
-            if (base.contains("sslmode=")) base else "$base&sslmode=require"
-        } else {
-            "$base?sslmode=require"
+
+    return when {
+        raw.startsWith("postgres://") -> {
+            val withoutScheme = raw.removePrefix("postgres://")
+            val hostPart = withoutScheme.substringAfter("@", withoutScheme)
+            val base = "jdbc:postgresql://$hostPart"
+            if ('?' in base) {
+                if (base.contains("sslmode=")) base else "$base&sslmode=require"
+            } else {
+                "$base?sslmode=require"
+            }
         }
-    } else if (raw.startsWith("jdbc:postgresql://")) {
-        raw
-    } else {
-        // Ex.: URL sem esquema explícito (raro) → tenta prefixar
-        "jdbc:postgresql://$raw"
+        raw.startsWith("jdbc:postgresql://") -> raw
+        else -> "jdbc:postgresql://$raw"
     }
 }
 
-/** Extrai user/pass de uma URL estilo postgres://user:pass@host/db */
-fun parseUserFromUrl(url: String): String? = try {
+private fun parseUserFromUrl(url: String): String? = try {
     val afterScheme = url.substringAfter("://", url)
     val creds = afterScheme.substringBefore('@', "")
-    creds.substringBefore(':').ifEmpty { null }
+    creds.substringBefore(':').ifBlank { null }
 } catch (_: Throwable) { null }
 
-fun parsePassFromUrl(url: String): String? = try {
+private fun parsePassFromUrl(url: String): String? = try {
     val afterScheme = url.substringAfter("://", url)
     val creds = afterScheme.substringBefore('@', "")
-    creds.substringAfter(':').ifEmpty { null }
+    creds.substringAfter(':').ifBlank { null }
 } catch (_: Throwable) { null }
 
-/* -------- URL -------- */
-val rawUrl = firstEnv("FLYWAY_URL", "JDBC_DATABASE_URL", "DATABASE_URL", "SPRING_DATASOURCE_URL")
-val urlValue = when {
-    isFlywayTaskRequested && rawUrl == null ->
-        throw GradleException(
-            "Missing Flyway URL. Set ONE of: FLYWAY_URL | JDBC_DATABASE_URL | DATABASE_URL | SPRING_DATASOURCE_URL"
-        )
-    rawUrl != null -> normalizeToJdbc(rawUrl)
-    else -> "jdbc:postgresql://localhost:5432/__placeholder__"
-}
-
-/* -------- USER / PASS (prefer envs; fallback: extrai da URL) -------- */
-val userValue = firstEnv("FLYWAY_USER", "JDBC_DATABASE_USERNAME", "DB_USERNAME", "SPRING_DATASOURCE_USERNAME")
-    ?: parseUserFromUrl(firstEnv("DATABASE_URL", "JDBC_DATABASE_URL", "FLYWAY_URL", "SPRING_DATASOURCE_URL") ?: "")
-    ?: if (isFlywayTaskRequested)
-        throw GradleException("Missing Flyway user. Set env FLYWAY_USER (ou um dos aliases) ou inclua na URL.")
-    else "__placeholder__"
-
-val passValue = firstEnv("FLYWAY_PASSWORD", "JDBC_DATABASE_PASSWORD", "DB_PASSWORD", "SPRING_DATASOURCE_PASSWORD")
-    ?: parsePassFromUrl(firstEnv("DATABASE_URL", "JDBC_DATABASE_URL", "FLYWAY_URL", "SPRING_DATASOURCE_URL") ?: "")
-    ?: if (isFlywayTaskRequested)
-        throw GradleException("Missing Flyway password. Set env FLYWAY_PASSWORD (ou um dos aliases) ou inclua na URL.")
-    else "__placeholder__"
-
-/* -------- SCHEMAS -------- */
-val schemasValue =
-    envOr("public", "FLYWAY_SCHEMAS")
-
-/* -------- LOCATIONS --------
-   Padrão: única pasta de migração. Incluo filesystem e classpath para cobrir Gradle task e empacotado. */
-val effectiveLocations: Array<String> =
-    firstEnv("FLYWAY_LOCATIONS")
+private fun parseLocations(raw: String?): Array<String>? =
+    raw
         ?.takeIf { it.isNotBlank() }
         ?.split(',')
         ?.map { it.trim() }
         ?.filter { it.isNotEmpty() }
-        ?.map { loc -> if (loc.startsWith("filesystem:") || loc.startsWith("classpath:")) loc else "filesystem:$loc" }
+        ?.map { loc ->
+            when {
+                loc.startsWith("filesystem:") || loc.startsWith("classpath:") -> loc
+                else -> "filesystem:$loc"
+            }
+        }
         ?.toTypedArray()
-        ?: arrayOf(
-            "filesystem:src/main/resources/db/migration",
-            "classpath:db/migration"
-        )
+
+private val isFlywayTaskRequested: Boolean =
+    gradle.startParameter.taskNames.any { it.startsWith("flyway", ignoreCase = true) && it != "bootRun" }
+
+/* -------- URL -------- */
+val rawUrl = firstEnv(FlywayEnv.url)
+val urlValue = when {
+    isFlywayTaskRequested && rawUrl == null ->
+        throw GradleException("Missing Flyway URL. Set ONE of: ${FlywayEnv.url.joinToString(" | ")}")
+    rawUrl != null -> normalizeToJdbc(rawUrl)
+    else -> "jdbc:postgresql://localhost:5432/placeholder"
+}
+
+/* -------- USER / PASS (prefer envs; fallback: extrai da URL) -------- */
+val urlForParsing = rawUrl ?: ""
+
+val userValue =
+    firstEnv(FlywayEnv.user)
+        ?: parseUserFromUrl(urlForParsing)
+        ?: if (isFlywayTaskRequested)
+            throw GradleException("Missing Flyway user. Set env FLYWAY_USER (ou alias) ou inclua na URL.")
+        else "placeholder"
+
+val passValue =
+    firstEnv(FlywayEnv.pass)
+        ?: parsePassFromUrl(urlForParsing)
+        ?: if (isFlywayTaskRequested)
+            throw GradleException("Missing Flyway password. Set env FLYWAY_PASSWORD (ou alias) ou inclua na URL.")
+        else "placeholder"
+
+/* -------- SCHEMAS -------- */
+val schemasValue = envOr("public", FlywayEnv.schemas)
+
+/* -------- LOCATIONS -------- */
+val effectiveLocations: Array<String> =
+    parseLocations(System.getenv(FlywayEnv.locations))
+        ?: arrayOf("filesystem:src/main/resources/db/migration", "classpath:db/migration")
 
 /* -------- CLEAN DISABLED -------- */
-val cleanDisabledValue =
-    (System.getenv("FLYWAY_CLEAN_DISABLED") ?: "true")
-        .toBooleanStrictOrNull() ?: true
+val cleanDisabledValue = parseBooleanEnv(FlywayEnv.cleanDisabled, default = true)
 
 /* -------- Placeholders -------- */
-val placeholderName  = envOr("", "SITE_AUTHOR_NAME")
-val placeholderEmail = envOr("", "SITE_AUTHOR_EMAIL")
-val placeholderPix   = envOr("", "SITE_AUTHOR_PIX_KEY")
+val placeholderName = envOr("", FlywayEnv.phName)
+val placeholderEmail = envOr("", FlywayEnv.phEmail)
+val placeholderPix = envOr("", FlywayEnv.phPixKey)
 
 flyway {
     url = urlValue

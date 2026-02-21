@@ -1,6 +1,7 @@
 package com.nicolaseduardo.e_commerce_adilson.bootstrap
 
-
+import com.nicolaseduardo.e_commerce_adilson.dto.author.AuthorUpsertDTO
+import com.nicolaseduardo.e_commerce_adilson.services.author.AuthorService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.ApplicationArguments

@@ -1,3 +1,4 @@
+import com.nicolaseduardo.e_commerce_adilson.services.card.CardService
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 import org.springframework.stereotype.Service

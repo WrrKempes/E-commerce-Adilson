@@ -1,3 +1,4 @@
+import com.nicolaseduardo.e_commerce_adilson.payments.web.PixPayoutProvider
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

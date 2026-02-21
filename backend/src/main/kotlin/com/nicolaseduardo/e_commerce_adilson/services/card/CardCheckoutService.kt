@@ -1,3 +1,8 @@
+import com.nicolaseduardo.e_commerce_adilson.exceptions.PaymentGatewayException
+import com.nicolaseduardo.e_commerce_adilson.models.coupon.OrderCoupon
+import com.nicolaseduardo.e_commerce_adilson.models.order.Order
+import com.nicolaseduardo.e_commerce_adilson.repositories.OrderRepository
+import com.nicolaseduardo.e_commerce_adilson.services.card.CardService
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.OffsetDateTime
@@ -278,7 +283,7 @@ class CardCheckoutService(
                 paid = false,
                 txid = txid,
                 items = mutableListOf(),
-                status = OrderStatus.NEW,
+                status = _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.NEW,
                 paymentMethod = "card"
             )
 
@@ -333,7 +338,7 @@ class CardCheckoutService(
         order.items.forEach { item ->
             bookService.reserveOrThrow(item.bookId, item.quantity)
         }
-        order.status = OrderStatus.WAITING
+        order.status = _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.WAITING
         order.reserveExpiresAt = OffsetDateTime.now().plusSeconds(ttlSeconds)
         orderRepository.save(order)
         log.info(
@@ -350,11 +355,11 @@ class CardCheckoutService(
             orderRepository.findWithItemsById(orderId)
                 ?: throw IllegalStateException("Order $orderId não encontrado")
 
-        if (order.status == OrderStatus.WAITING && !order.paid) {
+        if (order.status == _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.WAITING && !order.paid) {
             order.items.forEach { item ->
                 bookService.release(item.bookId, item.quantity)
             }
-            order.status = OrderStatus.EXPIRED
+            order.status = _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.EXPIRED
             order.reserveExpiresAt = null
             orderRepository.save(order)
             log.info("CARD-RESERVA LIBERADA: orderId={}", orderId)

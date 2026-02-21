@@ -1,3 +1,10 @@
+package com.nicolaseduardo.e_commerce_adilson.services.email.card
+
+import CardEmailBase
+import com.nicolaseduardo.e_commerce_adilson.config.payments.EfiCardPayoutProps
+import com.nicolaseduardo.e_commerce_adilson.models.order.Order
+import com.nicolaseduardo.e_commerce_adilson.services.book.BookService
+import com.nicolaseduardo.e_commerce_adilson.services.email.payout.DiscountDetailsHelper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Component
@@ -12,7 +19,7 @@ class CardAuthorApprovedEmailSender(
     bookService: BookService,
     private val payoutProps: EfiCardPayoutProps,
     @Value("\${email.author}") authorEmail: String,
-    @Value("\${application.brand.name:Agenor Gasparetto - E-Commerce}") brandName: String,
+    @Value("\${application.brand.name:Adilson Machado - E-Commerce}") brandName: String,
     @Value("\${mail.from:}") configuredFrom: String,
     @Value("\${mail.logo.url:https://www.andescoresoftware.com.br/AndesCore.jpg}") logoUrl: String,
     @Value("\${efi.card.payout.real-fee-percent-1x:3.49}") private val efiRealFeePercent1x: Double,
@@ -23,7 +30,7 @@ class CardAuthorApprovedEmailSender(
     fun send(order: Order) {
         val subject = "📦 Novo pedido pago (cartão) (#${order.id}) — $brandName"
         val html = buildHtml(order)
-        sendEmail(to = authorEmail, subject = subject, html = html)
+        CardEmailBase.sendEmail(to = authorEmail, subject = subject, html = html)
     }
 
     private fun buildHtml(order: Order): String {
@@ -31,29 +38,33 @@ class CardAuthorApprovedEmailSender(
         val shipping = if (order.shipping > BigDecimal.ZERO)
             "R$ %.2f".format(order.shipping.toDouble()) else "Grátis"
 
-        val phoneDigits = onlyDigits(order.phone)
-        val nationalPhone = normalizeBrPhone(phoneDigits)
-        val maskedPhone = maskCelularBr(nationalPhone.ifEmpty { order.phone })
+        val phoneDigits = CardEmailBase.onlyDigits(order.phone)
+        val nationalPhone = CardEmailBase.normalizeBrPhone(phoneDigits)
+        val maskedPhone = CardEmailBase.maskCelularBr(nationalPhone.ifEmpty { order.phone })
         val waHref = if (nationalPhone.length == 11) "https://wa.me/55$nationalPhone" else "https://wa.me/55$phoneDigits"
 
-        val addressLine = buildAddressLine(order)
+        val addressLine = CardEmailBase.buildAddressLine(order)
         val noteBlock = order.note?.takeIf { it.isNotBlank() }?.let {
-            """<p style="margin:10px 0 0"><strong>📝 Observação do cliente:</strong><br>${escapeHtml(it)}</p>"""
+            """<p style="margin:10px 0 0"><strong>📝 Observação do cliente:</strong><br>${CardEmailBase.escapeHtml(it)}</p>"""
         } ?: ""
 
         val header = """
             <p style="margin:0 0 10px"><strong>📦 Novo pedido pago</strong> no site.</p>
-            <p style="margin:0 0 4px">👤 Cliente: ${escapeHtml(order.firstName)} ${escapeHtml(order.lastName)}</p>
-            <p style="margin:0 0 4px">✉️ Email: ${escapeHtml(order.email)}</p>
+            <p style="margin:0 0 4px">👤 Cliente: ${CardEmailBase.escapeHtml(order.firstName)} ${
+            CardEmailBase.escapeHtml(
+                order.lastName
+            )
+        }</p>
+            <p style="margin:0 0 4px">✉️ Email: ${CardEmailBase.escapeHtml(order.email)}</p>
             <p style="margin:0 0 4px">📱 WhatsApp (cliente): <a href="$waHref">$maskedPhone</a></p>
             <p style="margin:0 0 4px">📍 Endereço: $addressLine</p>
             <p style="margin:0 0 4px">💳 Método: Cartão de crédito</p>
             $noteBlock
         """.trimIndent()
 
-        val itemsHtml = buildItemsHtml(order)
-        val couponBlock = buildCouponBlock(order, isAuthor = true)
-        val installmentsInfo = buildInstallmentsInfo(order)
+        val itemsHtml = CardEmailBase.buildItemsHtml(order)
+        val couponBlock = CardEmailBase.buildCouponBlock(order, isAuthor = true)
+        val installmentsInfo = CardEmailBase.buildInstallmentsInfo(order)
 
         // Determina a tarifa real da Efí Bank baseada no número de parcelas
         val installments = order.installments ?: 1
@@ -74,7 +85,7 @@ class CardAuthorApprovedEmailSender(
             installmentsInfo = installmentsLabel
         )
 
-        val footer = buildFooter()
+        val footer = CardEmailBase.buildFooter()
 
         return """
         <html>
@@ -86,10 +97,10 @@ class CardAuthorApprovedEmailSender(
               <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse">
                 <tr>
                   <td style="width:64px;vertical-align:middle;">
-                    <img src="$logoUrl" alt="${escapeHtml(brandName)}" width="56" style="display:block;border-radius:6px;">
+                    <img src="$logoUrl" alt="${CardEmailBase.escapeHtml(brandName)}" width="56" style="display:block;border-radius:6px;">
                   </td>
                   <td style="text-align:right;vertical-align:middle;">
-                    <div style="font-weight:700;font-size:14px;line-height:1;">${escapeHtml(brandName)}</div>
+                    <div style="font-weight:700;font-size:14px;line-height:1;">${CardEmailBase.escapeHtml(brandName)}</div>
                     <div style="height:6px;line-height:6px;font-size:0;">&nbsp;</div>
                     <div style="opacity:.9;font-size:14px;line-height:1.2;">Novo pedido pago (cartão)</div>
                   </td>
@@ -100,7 +111,7 @@ class CardAuthorApprovedEmailSender(
             <div style="padding:20px">
               $header
 
-              <p style="margin:12px 0 8px"><strong>🧾 Nº do pedido:</strong> #${escapeHtml(order.id.toString())}</p>
+              <p style="margin:12px 0 8px"><strong>🧾 Nº do pedido:</strong> #${CardEmailBase.escapeHtml(order.id.toString())}</p>
 
               $couponBlock
 

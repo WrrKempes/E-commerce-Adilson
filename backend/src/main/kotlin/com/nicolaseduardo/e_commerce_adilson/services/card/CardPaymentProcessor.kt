@@ -1,3 +1,4 @@
+import com.nicolaseduardo.e_commerce_adilson.repositories.OrderRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -26,7 +27,7 @@ class CardPaymentProcessor(
         if (order.paid) return true
 
         val now = OffsetDateTime.now()
-        if (order.status != OrderStatus.WAITING) {
+        if (order.status != _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.WAITING) {
             log.info("CONFIRM CARD: ignorado chargeId={}, status atual={}", chargeId, order.status); return false
         }
         if (order.reserveExpiresAt != null && now.isAfter(order.reserveExpiresAt)) {
@@ -35,7 +36,7 @@ class CardPaymentProcessor(
 
         order.paid = true
         order.paidAt = now
-        order.status = OrderStatus.CONFIRMED
+        order.status = _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.CONFIRMED
         orderRepository.save(order)
         log.info("CONFIRM CARD: order {} CONFIRMED (chargeId={})", order.id, chargeId)
 

@@ -1,6 +1,5 @@
 package com.nicolaseduardo.e_commerce_adilson.dto.order
 
-import com.luizgasparetto.backend.monolito.models.order.OrderEmail
 import java.time.OffsetDateTime
 
 data class OrderEmailDTO(

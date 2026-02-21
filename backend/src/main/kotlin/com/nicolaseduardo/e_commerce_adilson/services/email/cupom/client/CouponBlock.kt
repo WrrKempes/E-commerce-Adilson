@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.services.email.cupom.client
+
 import java.math.BigDecimal
 
 /**

@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.infra.idle
+
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.scheduling.annotation.EnableScheduling

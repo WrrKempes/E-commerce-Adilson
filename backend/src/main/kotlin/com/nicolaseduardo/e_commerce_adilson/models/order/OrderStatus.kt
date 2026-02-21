@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.models.order
+
 /**
  * Status da *ordem* no domínio da loja (não confundir com status específico da Efí).
  * Pensado para cobrir o fluxo de cartão (autorização, captura, etc.) e unificar com o resto.
@@ -74,4 +76,4 @@ enum class OrderStatus {
 }
 
 /** Atalho: converte string da Efí direto para OrderStatus. */
-fun String?.toOrderStatusFromEfi(): OrderStatus = OrderStatus.fromEfi(this)
+fun String?.toOrderStatusFromEfi(): OrderStatus = _root_ide_package_.OrderStatus.Companion.fromEfi(this)

@@ -1,3 +1,4 @@
+import com.nicolaseduardo.e_commerce_adilson.models.order.Order
 import jakarta.persistence.*
 import java.math.BigDecimal
 

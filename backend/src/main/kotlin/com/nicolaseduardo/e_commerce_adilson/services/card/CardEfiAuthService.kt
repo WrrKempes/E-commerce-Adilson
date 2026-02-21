@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.services.card
+
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service
 import java.nio.charset.StandardCharsets
 import java.util.Base64
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.collections.get
 
 @Service
 class CardEfiAuthService(

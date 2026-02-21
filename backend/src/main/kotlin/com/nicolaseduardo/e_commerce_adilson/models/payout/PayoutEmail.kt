@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.models.payout
+
 import jakarta.persistence.*
 import java.time.OffsetDateTime
 

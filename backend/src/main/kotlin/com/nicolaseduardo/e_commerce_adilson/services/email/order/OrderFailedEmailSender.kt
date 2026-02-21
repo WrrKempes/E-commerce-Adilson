@@ -1,7 +1,10 @@
+import com.nicolaseduardo.e_commerce_adilson.models.order.Order
+import com.nicolaseduardo.e_commerce_adilson.models.order.OrderEmailStatus
+import com.nicolaseduardo.e_commerce_adilson.models.order.OrderEmailType
+import com.nicolaseduardo.e_commerce_adilson.services.book.BookService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
 /**
  * Responsável por enviar email para cliente quando pagamento é rejeitado (FAILED/DECLINED)
@@ -12,7 +15,7 @@ class OrderFailedEmailSender(
     bookService: BookService,
     orderEmailRepository: OrderEmailRepository,
     @Value("\${email.author}") authorEmail: String,
-    @Value("\${application.brand.name:Agenor Gasparetto - E-Commerce}") brandName: String,
+    @Value("\${application.brand.name:Adilson Machado - E-Commerce}") brandName: String,
     @Value("\${mail.from:}") configuredFrom: String,
     @Value("\${mail.logo.url:https://www.andescoresoftware.com.br/AndesCore.jpg}") logoUrl: String
 ) : OrderStatusEmailBase(mailSender, bookService, orderEmailRepository, authorEmail, brandName, configuredFrom, logoUrl) {

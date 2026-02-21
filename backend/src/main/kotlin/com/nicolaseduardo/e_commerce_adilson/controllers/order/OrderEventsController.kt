@@ -1,7 +1,7 @@
 package com.nicolaseduardo.e_commerce_adilson.controllers.order
 
 import com.luizgasparetto.backend.monolito.services.order.OrderEventsPublisher
-import com.luizgasparetto.backend.monolito.web.ApiRoutes
+import com.nicolaseduardo.e_commerce_adilson.web.ApiRoutes
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping

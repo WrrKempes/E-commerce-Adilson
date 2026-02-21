@@ -1,9 +1,9 @@
 package com.nicolaseduardo.e_commerce_adilson.controllers.author
 
-import com.luizgasparetto.backend.monolito.dto.author.AuthorDTO
-import com.luizgasparetto.backend.monolito.dto.author.AuthorUpsertDTO
-import com.luizgasparetto.backend.monolito.services.author.AuthorService
-import com.luizgasparetto.backend.monolito.web.ApiRoutes
+import com.nicolaseduardo.e_commerce_adilson.dto.author.AuthorDTO
+import com.nicolaseduardo.e_commerce_adilson.dto.author.AuthorUpsertDTO
+import com.nicolaseduardo.e_commerce_adilson.services.author.AuthorService
+import com.nicolaseduardo.e_commerce_adilson.web.ApiRoutes
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
 import org.springframework.validation.annotation.Validated

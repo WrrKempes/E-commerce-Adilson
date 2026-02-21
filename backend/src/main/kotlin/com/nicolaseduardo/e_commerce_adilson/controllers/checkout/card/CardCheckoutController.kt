@@ -1,9 +1,14 @@
 package com.nicolaseduardo.e_commerce_adilson.controllers.checkout.card
 
-import com.luizgasparetto.backend.monolito.dto.card.CardCheckoutRequest
-import com.luizgasparetto.backend.monolito.dto.card.CardCheckoutResponse
-import com.luizgasparetto.backend.monolito.services.card.CardCheckoutService
-import com.luizgasparetto.backend.monolito.web.ApiRoutes
+import CardCheckoutService
+import com.nicolaseduardo
+import com.nicolaseduardo.e_commerce_adilson.dto.card.CardCheckoutRequest
+import com.nicolaseduardo.e_commerce_adilson.dto.card.CardCheckoutResponse
+
+..backend.monolito.dto.card.CardCheckoutRequest
+import com.nicolaseduardo..backend.monolito.dto.card.CardCheckoutResponse
+import com.nicolaseduardo..backend.monolito.services.card.CardCheckoutService
+import com.nicolaseduardo.e_commerce_adilson.web.ApiRoutes
 import jakarta.validation.Valid
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity

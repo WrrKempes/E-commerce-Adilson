@@ -52,7 +52,7 @@ enum class OrderStatus {
          * - "processing" -> PROCESSING
          * - "confirmed"  -> CONFIRMED
          */
-        fun fromEfi(status: String?): OrderStatus = when (status?.lowercase()) {
+        fun fromEfi(status: String?): com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus = when (status?.lowercase()) {
             "new"          -> NEW
             "waiting"      -> WAITING
             "processing"   -> PROCESSING
@@ -74,4 +74,4 @@ enum class OrderStatus {
 }
 
 /** Atalho: converte string da Efí direto para OrderStatus. */
-fun String?.toOrderStatusFromEfi(): OrderStatus = OrderStatus.fromEfi(this)
+fun String?.toOrderStatusFromEfi(): com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus = OrderStatus.fromEfi(this)

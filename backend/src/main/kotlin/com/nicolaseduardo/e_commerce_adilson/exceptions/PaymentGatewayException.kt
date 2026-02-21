@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.exceptions
+
 /**
  * Erro ao falar com o gateway de pagamento (Efí, etc).
  *

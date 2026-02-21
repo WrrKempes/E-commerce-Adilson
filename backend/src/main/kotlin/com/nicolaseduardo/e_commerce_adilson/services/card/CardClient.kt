@@ -1,6 +1,7 @@
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.luizgasparetto.backend.monolito.config.efi.CardEfiProperties
+import com.nicolaseduardo.e_commerce_adilson.config.efi.CardEfiProperties
+import com.nicolaseduardo.e_commerce_adilson.services.card.CardEfiAuthService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.*

@@ -1,3 +1,9 @@
+package com.nicolaseduardo.e_commerce_adilson.web
+
+import com.nicolaseduardo.e_commerce_adilson.config.efi.EfiAuthException
+import com.nicolaseduardo.e_commerce_adilson.config.efi.EfiClientException
+import com.nicolaseduardo.e_commerce_adilson.config.efi.EfiRateLimitException
+import com.nicolaseduardo.e_commerce_adilson.config.efi.EfiServerException
 import org.slf4j.MDC
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler

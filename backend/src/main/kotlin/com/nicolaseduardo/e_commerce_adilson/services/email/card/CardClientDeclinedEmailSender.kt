@@ -1,3 +1,5 @@
+import com.nicolaseduardo.e_commerce_adilson.models.order.Order
+import com.nicolaseduardo.e_commerce_adilson.services.book.BookService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Component
@@ -10,7 +12,7 @@ class CardClientDeclinedEmailSender(
     mailSender: JavaMailSender,
     bookService: BookService,
     @Value("\${email.author}") authorEmail: String,
-    @Value("\${application.brand.name:Agenor Gasparetto - E-Commerce}") brandName: String,
+    @Value("\${application.brand.name:Adilson Machado - E-Commerce}") brandName: String,
     @Value("\${mail.from:}") configuredFrom: String,
     @Value("\${mail.logo.url:https://www.andescoresoftware.com.br/AndesCore.jpg}") logoUrl: String
 ) : CardEmailBase(mailSender, bookService, authorEmail, brandName, configuredFrom, logoUrl) {

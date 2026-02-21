@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.extensions
+
 import java.text.Normalizer
 import java.util.regex.Pattern
 

@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.infra.idle
+
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect

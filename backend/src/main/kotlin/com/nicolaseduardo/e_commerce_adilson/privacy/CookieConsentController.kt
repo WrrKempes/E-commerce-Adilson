@@ -1,3 +1,4 @@
+import com.nicolaseduardo.e_commerce_adilson.web.ApiRoutes
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.constraints.NotNull
@@ -57,8 +58,8 @@ class CookieConsentController(
         val referer = req.getHeader("Referer") ?: ""
         val allowed =
             listOf(
-                "https://www.agenorgasparetto.com.br",
-                "https://agenorgasparetto.com.br",
+                "https://www.adilsonmachado.com.br",
+                "https://adilsonmachado.com.br",
                 "http://localhost:5173"
             )
         val ok = allowed.any { a -> origin == a || referer.startsWith(a) }

@@ -1,6 +1,5 @@
 package com.nicolaseduardo.e_commerce_adilson.dto.coupon
 
-import com.luizgasparetto.backend.monolito.models.coupon.DiscountType
 import java.math.BigDecimal
 
 data class CouponValidationResponseDto(

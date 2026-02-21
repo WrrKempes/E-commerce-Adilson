@@ -1,3 +1,6 @@
+package com.nicolaseduardo.e_commerce_adilson.repositories
+
+import com.nicolaseduardo.e_commerce_adilson.models.coupon.Coupon
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param

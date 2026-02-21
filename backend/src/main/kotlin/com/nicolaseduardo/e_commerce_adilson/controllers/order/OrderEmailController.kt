@@ -1,9 +1,11 @@
 package com.nicolaseduardo.e_commerce_adilson.controllers.order
 
-import com.luizgasparetto.backend.monolito.dto.order.OrderEmailDTO
-import com.luizgasparetto.backend.monolito.models.order.OrderEmailStatus
-import com.luizgasparetto.backend.monolito.repositories.OrderEmailRepository
-import com.luizgasparetto.backend.monolito.web.ApiRoutes
+import OrderEmailRepository
+import com.nicolaseduardo..backend.monolito.dto.order.OrderEmailDTO
+import com.nicolaseduardo..backend.monolito.repositories.OrderEmailRepository
+import com.nicolaseduardo.e_commerce_adilson.dto.order.OrderEmailDTO
+import com.nicolaseduardo.e_commerce_adilson.models.order.OrderEmailStatus
+import com.nicolaseduardo.e_commerce_adilson.web.ApiRoutes
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 

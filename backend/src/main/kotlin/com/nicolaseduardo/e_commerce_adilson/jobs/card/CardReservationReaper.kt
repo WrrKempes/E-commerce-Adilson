@@ -1,3 +1,8 @@
+package com.nicolaseduardo.e_commerce_adilson.jobs.card
+
+import com.nicolaseduardo.e_commerce_adilson.services.card.CardService
+import com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus
+import com.nicolaseduardo.e_commerce_adilson.services.book.BookService
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component

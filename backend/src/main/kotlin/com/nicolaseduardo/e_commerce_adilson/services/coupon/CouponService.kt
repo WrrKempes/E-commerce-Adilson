@@ -1,3 +1,8 @@
+import com.nicolaseduardo.e_commerce_adilson.exceptions.CouponValidationException
+import com.nicolaseduardo.e_commerce_adilson.extensions.normalizeCouponCode
+import com.nicolaseduardo.e_commerce_adilson.models.coupon.Coupon
+import com.nicolaseduardo.e_commerce_adilson.models.coupon.DiscountType
+import com.nicolaseduardo.e_commerce_adilson.repositories.CouponRepository
 import java.math.BigDecimal
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.infra.idle
+
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.bind.DefaultValue
 

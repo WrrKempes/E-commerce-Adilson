@@ -1,3 +1,5 @@
+import com.nicolaseduardo.e_commerce_adilson.repositories.OrderRepository
+import com.nicolaseduardo.e_commerce_adilson.services.card.CardService
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -16,7 +18,7 @@ class CardSecurityInvalidator(
     fun invalidateExpiredCards() {
         val now = OffsetDateTime.now()
         // Busca pedidos que estão WAITING e cuja reserva expirou
-        val expiredOrders = orderRepository.findExpiredReservations(now, OrderStatus.WAITING)
+        val expiredOrders = orderRepository.findExpiredReservations(now, _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.WAITING)
 
         if (expiredOrders.isEmpty()) {
             log.debug("CARD_INVALIDATOR: Nenhuma reserva CARD expirada para invalidar.")
@@ -56,7 +58,7 @@ class CardSecurityInvalidator(
                 }
 
                 // Marca o pedido como EXPIRED no sistema
-                order.status = OrderStatus.EXPIRED
+                order.status = _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.EXPIRED
                 order.reserveExpiresAt = null // Limpa a data de expiração da reserva
                 orderRepository.save(order)
                 log.info("CARD_INVALIDATOR: Pedido orderId={} (chargeId={}) marcado como EXPIRED por segurança.", order.id, order.chargeId)

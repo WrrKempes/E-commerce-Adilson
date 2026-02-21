@@ -1,10 +1,8 @@
 package com.nicolaseduardo.e_commerce_adilson.bootstrap
 
-package com.luizgasparetto.backend.monolito.bootstrap
-
-import com.luizgasparetto.backend.monolito.config.coupon.CouponProperties
-import com.luizgasparetto.backend.monolito.models.coupon.DiscountType
-import com.luizgasparetto.backend.monolito.repositories.CouponRepository
+import com.nicolaseduardo.e_commerce_adilson.config.coupon.CouponProperties
+import com.nicolaseduardo.e_commerce_adilson.repositories.CouponRepository
+import com.nicolaseduardo.e_commerce_adilson.models.coupon.DiscountType
 import jakarta.persistence.EntityManager
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationRunner
@@ -88,7 +86,7 @@ class CouponBootstrapRunner(
                 code, discountValue)
         } else {
             // Criar novo cupom
-            val coupon = com.luizgasparetto.backend.monolito.models.coupon.Coupon(
+            val coupon = com.nicolaseduardo.e_commerce_adilson.models.coupon.Coupon(
                 code = code,
                 name = couponProperties.name ?: "Cupom Bônus",
                 description = couponProperties.description,

@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.payments.web
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate

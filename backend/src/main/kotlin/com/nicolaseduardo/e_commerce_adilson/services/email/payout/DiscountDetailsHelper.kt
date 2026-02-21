@@ -1,3 +1,8 @@
+package com.nicolaseduardo.e_commerce_adilson.services.email.payout
+
+import com.nicolaseduardo.e_commerce_adilson.config.payments.EfiCardPayoutProps
+import com.nicolaseduardo.e_commerce_adilson.config.payments.EfiPayoutProps
+import com.nicolaseduardo.e_commerce_adilson.config.payments.EfiPixPayoutProps
 import java.math.BigDecimal
 import java.math.RoundingMode
 

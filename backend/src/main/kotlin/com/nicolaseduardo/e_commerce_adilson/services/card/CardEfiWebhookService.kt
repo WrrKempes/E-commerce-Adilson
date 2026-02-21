@@ -1,3 +1,4 @@
+import com.nicolaseduardo.e_commerce_adilson.repositories.OrderRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -36,15 +37,15 @@ class CardEfiWebhookService(
 
         order.status = newStatus
 
-        if (newStatus in arrayOf(OrderStatus.REFUNDED, OrderStatus.PARTIALLY_REFUNDED)) {
+        if (newStatus in arrayOf(_root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.REFUNDED, _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.PARTIALLY_REFUNDED)) {
             // já houve pagamento; mantemos paid=true indicando que o fluxo de pagamento ocorreu
             order.paid = true
         } else if (newStatus in
             arrayOf(
-                OrderStatus.CANCELED,
-                OrderStatus.DECLINED,
-                OrderStatus.UNPAID,
-                OrderStatus.EXPIRED
+                _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.CANCELED,
+                _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.DECLINED,
+                _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.UNPAID,
+                _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.EXPIRED
             )
         ) {
             order.paid = false
@@ -55,10 +56,10 @@ class CardEfiWebhookService(
 
     // Helper simples para reverter o enum para string se necessário, ou usar direto strings da Efi
     // se disponível
-    private fun OrderStatus.toEfiStatus(): String =
+    private fun com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.toEfiStatus(): String =
         when (this) {
-            OrderStatus.PAID -> "paid"
-            OrderStatus.CONFIRMED -> "approved" // Aproximação
+            _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.PAID -> "paid"
+            _root_ide_package_.com.nicolaseduardo.e_commerce_adilson.models.order.OrderStatus.CONFIRMED -> "approved" // Aproximação
             else -> this.name
         }
 }

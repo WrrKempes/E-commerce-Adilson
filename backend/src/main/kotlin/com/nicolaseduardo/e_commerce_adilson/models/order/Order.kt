@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.models.order
+
 import jakarta.persistence.*
 import java.math.BigDecimal
 import java.time.OffsetDateTime

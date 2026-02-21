@@ -1,3 +1,13 @@
+import com.nicolaseduardo.e_commerce_adilson.exceptions.PaymentGatewayException
+import com.nicolaseduardo.e_commerce_adilson.exceptions.ReservationConflictException
+import jakarta.servlet.http.HttpServletRequest
+import org.hibernate.validator.internal.util.logging.LoggerFactory
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.servlet.resource.NoResourceFoundException
+
 @RestControllerAdvice
 class ApiExceptionHandler {
     private val log = LoggerFactory.getLogger(ApiExceptionHandler::class.java)

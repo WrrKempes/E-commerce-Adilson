@@ -1,3 +1,6 @@
+import com.nicolaseduardo.e_commerce_adilson.models.order.Order
+import com.nicolaseduardo.e_commerce_adilson.services.book.BookService
+import com.nicolaseduardo.e_commerce_adilson.services.email.common.EmailFooter
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
@@ -13,7 +16,7 @@ abstract class CardEmailBase(
     protected val mailSender: JavaMailSender,
     protected val bookService: BookService,
     @Value("\${email.author}") val authorEmail: String,
-    @Value("\${application.brand.name:Agenor Gasparetto - E-Commerce}") protected val brandName: String,
+    @Value("\${application.brand.name:Adilson Machado - E-Commerce}") protected val brandName: String,
     @Value("\${mail.from:}") protected val configuredFrom: String,
     @Value("\${mail.logo.url:https://www.andescoresoftware.com.br/AndesCore.jpg}") protected val logoUrl: String
 ) {
@@ -95,12 +98,12 @@ abstract class CardEmailBase(
         }
 
         return if (isAuthor) {
-            com.luizgasparetto.backend.monolito.services.email.cupom.author.CouponBlock.build(
+            com.nicolaseduardo.backend.monolito.services.email.cupom.author.CouponBlock.build(
                 order.couponCode!!,
                 order.discountAmount!!
             )
         } else {
-            com.luizgasparetto.backend.monolito.services.email.cupom.client.CouponBlock.build(
+            com.nicolaseduardo.backend.services.email.cupom.client.CouponBlock.build(
                 order.couponCode!!,
                 order.discountAmount!!
             )

@@ -1,3 +1,6 @@
+import com.nicolaseduardo.e_commerce_adilson.models.order.Order
+import com.nicolaseduardo.e_commerce_adilson.services.email.card.CardAuthorApprovedEmailSender
+import com.nicolaseduardo.e_commerce_adilson.services.email.card.CardAuthorDeclinedEmailSender
 import org.springframework.stereotype.Service
 
 /**

@@ -1,9 +1,11 @@
 package com.nicolaseduardo.e_commerce_adilson.controllers.checkout.pix
 
-import com.luizgasparetto.backend.monolito.dto.pix.PixCheckoutRequest
-import com.luizgasparetto.backend.monolito.dto.pix.PixCheckoutResponse
-import com.luizgasparetto.backend.monolito.services.pix.PixCheckoutService
-import com.luizgasparetto.backend.monolito.web.ApiRoutes
+import com.nicolaseduardo.backend.monolito.dto.pix.PixCheckoutRequest
+import com.nicolaseduardo.backend.monolito.dto.pix.PixCheckoutResponse
+import com.nicolaseduardo.backend.monolito.services.pix.PixCheckoutService
+import com.nicolaseduardo.e_commerce_adilson.dto.pix.PixCheckoutRequest
+import com.nicolaseduardo.e_commerce_adilson.dto.pix.PixCheckoutResponse
+import com.nicolaseduardo.e_commerce_adilson.web.ApiRoutes
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.infra.idle
+
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

@@ -1,3 +1,5 @@
+package com.nicolaseduardo.e_commerce_adilson.payments.web
+
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.hc.client5.http.classic.methods.HttpPost
@@ -22,6 +24,8 @@ import org.springframework.stereotype.Component
 import java.io.InputStream
 import java.math.BigDecimal
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.security.KeyStore
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
@@ -161,7 +165,7 @@ class EfiPixPayoutProvider(
             requireNotNull(stream) { "Certificado não encontrado no classpath: $resPath" }
             stream
         } else {
-            java.nio.file.Files.newInputStream(java.nio.file.Paths.get(certPath))
+            Files.newInputStream(Paths.get(certPath))
         }
 
         input.use { ins ->
